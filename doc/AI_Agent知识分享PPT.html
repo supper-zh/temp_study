@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>AI Agent知识分享PPT</title>
+  <meta name="viewport" content="width=1920, initial-scale=1.0">
+  <!-- Echarts CDN -->
+  <script src="https://storage.360buyimg.com/pubfree-bucket/ei-data-resource/02f0288/static/echarts.min.js"></script>
+  <style>
+    html, body {
+      width: 100vw;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+      background: #23262f;
+      font-family: 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', Arial, sans-serif;
+      overflow: hidden;
+    }
+    .ppt-container {
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+      background: #23262f;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .slide {
+      width: 100vw;
+      height: 100vh;
+      display: none;
+      flex-direction: column;
+      background: #23262f;
+      box-sizing: border-box;
+      padding: 0;
+      position: absolute;
+      left: 0; top: 0;
+      z-index: 1;
+    }
+    .slide.active {
+      display: flex;
+      animation: fadeIn 0.4s;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    /* 统一标题卡片 */
+    .slide-title {
+      width: 90%;
+      margin: 36px auto 24px auto;
+      font-size: 2.6rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: #e6e7ec;
+      background: #31334a;
+      border-radius: 20px;
+      padding: 22px 48px;
+      box-sizing: border-box;
+      text-align: left;
+      box-shadow: 0 4px 18px 0 rgba(36,39,50,0.08);
+    }
+    /* 首页特殊标题 */
+    .cover-title {
+      font-size: 3.5rem;
+      font-weight: 800;
+      color: #e6e7ec;
+      letter-spacing: 0.12em;
+      text-align: center;
+      margin-top: 13vh;
+      margin-bottom: 32px;
+    }
+    .cover-subtitle {
+      font-size: 1.5rem;
+      color: #b3b5c6;
+      text-align: center;
+      margin-bottom: 48px;
+      letter-spacing: 0.05em;
+    }
+    .cover-meta {
+      font-size: 1.1rem;
+      color: #9fa2b7;
+      text-align: center;
+      margin-bottom: 8px;
+      letter-spacing: 0.03em;
+    }
+    /* 目录卡片 */
+    .catalog-list {
+      width: 70%;
+      margin: 0 auto;
+      background: #2e3140;
+      border-radius: 18px;
+      padding: 38px 54px;
+      box-sizing: border-box;
+      box-shadow: 0 4px 18px 0 rgba(36,39,50,0.07);
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+    .catalog-item {
+      font-size: 1.5rem;
+      color: #e6e7ec;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      display: flex;
+      align-items: center;
+    }
+    .catalog-index {
+      background: #4c4f63;
+      color: #b6b8c9;
+      border-radius: 50%;
+      width: 2.2em;
+      height: 2.2em;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      margin-right: 18px;
+      font-weight: 700;
+    }
+    /* 过渡页 */
+    .transition-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .transition-text {
+      font-size: 2.8rem;
+      font-weight: 700;
+      color: #fafbff;
+      background: #43455a;
+      border-radius: 18px;
+      padding: 32px 68px;
+      letter-spacing: 0.08em;
+      box-shadow: 0 6px 24px 0 rgba(36,39,50,0.10);
+      margin-bottom: 0;
+    }
+    /* 内容卡片布局 */
+    .card-group {
+      width: 88%;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: row;
+      gap: 32px;
+      justify-content: center;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+    .card {
+      background: #2e3140;
+      border-radius: 18px;
+      box-shadow: 0 4px 18px 0 rgba(36,39,50,0.07);
+      padding: 34px 38px;
+      box-sizing: border-box;
+      color: #e6e7ec;
+      font-size: 1.22rem;
+      font-weight: 400;
+      letter-spacing: 0.02em;
+      margin-bottom: 0;
+      flex: 1 1 0;
+      min-width: 340px;
+      max-width: 560px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .card-list {
+      list-style: disc inside;
+      color: #b3b5c6;
+      font-size: 1.12rem;
+      margin: 0 0 0 1.1em;
+      padding: 0;
+      line-height: 1.8;
+    }
+    .card-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #2e3140;
+      color: #e6e7ec;
+      font-size: 1.05rem;
+      margin-top: 8px;
+      margin-bottom: 8px;
+    }
+    .card-table th, .card-table td {
+      border: 1px solid #43455a;
+      padding: 8px 16px;
+      text-align: left;
+    }
+    .card-table th {
+      background: #3c3f54;
+      color: #b3b5c6;
+      font-weight: 600;
+    }
+    .card-table tr:nth-child(even) {
+      background: #2e3140;
+    }
+    .card-table tr:nth-child(odd) {
+      background: #343652;
+    }
+    .card-subtitle {
+      font-size: 1.15rem;
+      color: #b3b5c6;
+      font-weight: 600;
+      margin-bottom: 4px;
+      margin-top: 6px;
+    }
+    /* 图表卡片 */
+    .echarts-card {
+      background: #2e3140;
+      border-radius: 18px;
+      box-shadow: 0 4px 18px 0 rgba(36,39,50,0.07);
+      padding: 30px 28px 18px 28px;
+      box-sizing: border-box;
+      color: #e6e7ec;
+      min-width: 440px;
+      max-width: 660px;
+      flex: 1 1 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 0;
+    }
+    .echarts-title {
+      font-size: 1.18rem;
+      color: #b3b5c6;
+      font-weight: 600;
+      margin-bottom: 18px;
+      text-align: center;
+      width: 100%;
+    }
+    .echarts-box {
+      width: 400px;
+      height: 260px;
+      min-width: 320px;
+      min-height: 180px;
+      margin: 0 auto;
+    }
+    /* 总结页、结束页 */
+    .summary-list {
+      width: 70%;
+      margin: 0 auto;
+      background: #2e3140;
+      border-radius: 18px;
+      padding: 36px 52px;
+      box-sizing: border-box;
+      box-shadow: 0 4px 18px 0 rgba(36,39,50,0.07);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .summary-item {
+      font-size: 1.2rem;
+      color: #e6e7ec;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      display: flex;
+      align-items: flex-start;
+    }
+    .summary-index {
+      background: #4c4f63;
+      color: #b6b8c9;
+      border-radius: 50%;
+      width: 2em;
+      height: 2em;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      margin-right: 16px;
+      font-weight: 700;
+      margin-top: 3px;
+    }
+    /* 结束页 */
+    .ending-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .ending-text {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #fafbff;
+      background: #43455a;
+      border-radius: 18px;
+      padding: 30px 64px;
+      letter-spacing: 0.08em;
+      box-shadow: 0 6px 24px 0 rgba(36,39,50,0.10);
+      margin-bottom: 24px;
+    }
+    .ending-meta {
+      font-size: 1.15rem;
+      color: #b3b5c6;
+      text-align: center;
+      margin-bottom: 0;
+      letter-spacing: 0.03em;
+    }
+    /* 控件 */
+    .ppt-controls {
+      position: absolute;
+      right: 38px;
+      bottom: 38px;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: rgba(46,49,64,0.93);
+      border-radius: 18px;
+      padding: 10px 20px 10px 18px;
+      box-shadow: 0 2px 10px 0 rgba(36,39,50,0.08);
+      user-select: none;
+    }
+    .ppt-btn {
+      background: #43455a;
+      color: #e6e7ec;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.25rem;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      margin: 0 3px;
+      transition: background 0.18s;
+      outline: none;
+    }
+    .ppt-btn:active {
+      background: #31334a;
+    }
+    .ppt-btn[disabled] {
+      background: #2e3140;
+      color: #888ca3;
+      cursor: not-allowed;
+    }
+    .ppt-progress-bar {
+      width: 140px;
+      height: 7px;
+      background: #393c52;
+      border-radius: 5px;
+      margin: 0 14px;
+      position: relative;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .ppt-progress {
+      height: 100%;
+      background: #7e7ff3;
+      border-radius: 5px;
+      transition: width 0.18s;
+    }
+    .ppt-progress-label {
+      color: #b3b5c6;
+      font-size: 1rem;
+      margin-left: 10px;
+      letter-spacing: 0.03em;
+      min-width: 56px;
+      text-align: right;
+    }
+    @media (max-width: 1200px) {
+      .slide-title, .catalog-list, .summary-list { font-size: 1.3rem; }
+      .card, .echarts-card { font-size: 1rem; min-width: 220px; }
+      .echarts-box { width: 280px; height: 180px; }
+    }
+    @media (max-width: 800px) {
+      .slide-title, .catalog-list, .summary-list { font-size: 1.1rem; }
+      .card, .echarts-card { font-size: 0.92rem; min-width: 120px; }
+      .echarts-box { width: 180px; height: 120px; }
+      .card-group { flex-direction: column; gap: 16px; }
+    }
+  </style>
+</head>
+<body>
+<div class="ppt-container">
+  <!-- 1. 封面 -->
+  <section class="slide active" id="slide-0">
+    <div class="cover-title">AI Agent 知识分享</div>
+    <div class="cover-subtitle">智能体时代的技术框架、分类与应用趋势</div>
+    <div class="cover-meta">作者：Genie</div>
+    <div class="cover-meta">时间：2025-08-12</div>
+  </section>
+  <!-- 2. 目录 -->
+  <section class="slide" id="slide-1">
+    <div class="slide-title">目录</div>
+    <div class="catalog-list">
+      <div class="catalog-item"><span class="catalog-index">1</span>AI Agent的定义与核心特征</div>
+      <div class="catalog-item"><span class="catalog-index">2</span>AI Agent与传统AI的对比</div>
+      <div class="catalog-item"><span class="catalog-index">3</span>反应式Agent与认知型Agent的分类</div>
+      <div class="catalog-item"><span class="catalog-index">4</span>应用场景与典型案例</div>
+      <div class="catalog-item"><span class="catalog-index">5</span>总结与未来趋势</div>
+    </div>
+  </section>
+  <!-- 3. 过渡页1 -->
+  <section class="slide" id="slide-2">
+    <div class="transition-content">
+      <div class="transition-text">AI Agent的定义与核心特征</div>
+    </div>
+  </section>
+  <!-- 4. AI Agent定义与本质 -->
+  <section class="slide" id="slide-3">
+    <div class="slide-title">AI Agent的基本定义</div>
+    <div class="card-group">
+      <div class="card">
+        <div class="card-subtitle">什么是AI Agent？</div>
+        <ul class="card-list">
+          <li>AI Agent是<strong>能够自主感知环境、独立决策并执行任务</strong>的智能体。</li>
+          <li>核心公式：<b>Agent = 大模型(LLM) + 规划(Planning) + 记忆(Memory) + 工具(Tool)</b></li>
+          <li>区别于传统AI，AI Agent不仅能回答问题，还能主动完成复杂任务。</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-subtitle">四大核心组件</div>
+        <ul class="card-list">
+          <li><b>大模型(LLM)：</b> 推理与理解的“智能大脑”</li>
+          <li><b>规划：</b> 拆解复杂目标，制定多步执行计划</li>
+          <li><b>记忆：</b> 包含短期（上下文）与长期（知识库/向量数据库）</li>
+          <li><b>工具：</b> 可调用API、数据库等外部能力</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+  <!-- 5. AI Agent核心特征 -->
+  <section class="slide" id="slide-4">
+    <div class="slide-title">AI Agent的核心特征</div>
+    <div class="card-group">
+      <div class="card">
+        <div class="card-subtitle">自主性与目的性</div>
+        <ul class="card-list">
+          <li>具备明确自主决策能力，无需人工持续干预</li>
+          <li>行为具有目的导向，如自动完成业务流程</li>
+        </ul>
+        <div class="card-subtitle">任务分解与规划</div>
+        <ul class="card-list">
+          <li>能将大目标拆解为可执行子任务序列</li>
+          <li>支持多步推理与复杂流程自动化</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-subtitle">环境交互与多模态能力</div>
+        <ul class="card-list">
+          <li>支持文本、图像、语音等多模态输入输出</li>
+          <li>可通过API、传感器等与环境动态交互</li>
+        </ul>
+        <div class="card-subtitle">持续学习与适应性</div>
+        <ul class="card-list">
+          <li>拥有短期与长期记忆模块</li>
+          <li>可通过反馈持续优化策略，适应新任务和环境</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+  <!-- 6. 过渡页2 -->
+  <section class="slide" id="slide-5">
+    <div class="transition-content">
+      <div class="transition-text">AI Agent与传统AI的对比</div>
+    </div>
+  </section>
+  <!-- 7. 传统AI vs AI Agent 核心差异 -->
+  <section class="slide" id="slide-6">
+    <div class="slide-title">AI Agent与传统AI的核心差异</div>
+    <div class="card-group">
+      <div class="card">
+        <div class="card-subtitle">传统AI</div>
+        <ul class="card-list">
+          <li>以单一模型或规则为主，响应式、任务单一</li>
+          <li>缺乏自主决策与持续学习能力</li>
+          <li>适用于封闭、确定性场景</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-subtitle">AI Agent</div>
+        <ul class="card-list">
+          <li>具备感知、规划、记忆和工具调用能力</li>
+          <li>能自主分解任务、动态决策与适应环境</li>
+          <li>支持多模态输入输出，持续学习与优化</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+  <!-- 8. 传统AI与AI Agent 对比表格 -->
+  <section class="slide" id="slide-7">
+    <div class="slide-title">AI Agent与传统AI系统对比</div>
+    <div class="card-group">
+      <div class="card" style="flex:2 1 0;max-width:900px;">
+        <table class="card-table">
+          <tr>
+            <th>对比维度</th>
+            <th>传统AI系统</th>
+            <th>AI Agent</th>
+          </tr>
+          <tr>
+            <td>交互模式</td>
+            <td>被动响应单一查询</td>
+            <td>主动规划多步任务流程</td>
+          </tr>
+          <tr>
+            <td>决策机制</td>
+            <td>规则/静态策略</td>
+            <td>动态推理与规划</td>
+          </tr>
+          <tr>
+            <td>数据处理</td>
+            <td>结构化数据为主</td>
+            <td>非结构化数据(文本/图像等)</td>
+          </tr>
+          <tr>
+            <td>工具使用</td>
+            <td>功能封闭</td>
+            <td>可调用多种外部工具</td>
+          </tr>
+          <tr>
+            <td>适应性</td>
+            <td>需人工适配新场景</td>
+            <td>自主优化与学习</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </section>
+  <!-- 9. 对比可视化图表 -->
+  <section class="slide" id="slide-8">
+    <div class="slide-title">AI Agent与传统AI的能力对比</div>
+    <div class="card-group">
+      <div class="echarts-card">
+        <div class="echarts-title">关键能力雷达图</div>
+        <div class="echarts-box" id="echarts-radar"></div>
+      </div>
+      <div class="card" style="max-width:430px;">
+        <div class="card-subtitle">能力维度说明</div>
+        <ul class="card-list">
+          <li>自主性</li>
+          <li>多模态交互</li>
+          <li>任务复杂度</li>
+          <li>环境适应性</li>
+          <li>持续学习</li>
+        </ul>
+        <div class="card-subtitle">AI Agent在各维度均显著优于传统AI</div>
+      </div>
+    </div>
+  </section>
+  <!-- 10. 过渡页3 -->
+  <section class="slide" id="slide-9">
+    <div class="transition-content">
+      <div class="transition-text">反应式Agent与认知型Agent的分类</div>
+    </div>
+  </section>
+  <!-- 11. 反应式Agent定义与特征 -->
+  <section class="slide" id="slide-10">
+    <div class="slide-title">反应式Agent：定义与技术特征</div>
+    <div class="card-group">
+      <div class="card">
+        <div class="card-subtitle">基本定义</div>
+        <ul class="card-list">
+          <li>直接根据环境当前状态触发预设行为</li>
+          <li>无内部状态模型，仅对即时感知做出响应</li>
+        </ul>
+        <div class="card-subtitle">核心特征</div>
+        <ul class="card-list">
+          <li>条件-动作规则驱动（if-then）</li>
+          <li>实时响应性高，计算资源消耗低</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-subtitle">典型应用</div>
+        <ul class="card-list">
+          <li>工业控制系统（如PLC产线）</li>
+          <li>物联网设备、简单游戏NPC</li>
+          <li>实时监控与告警系统</li>
+        </ul>
+        <div class="card-subtitle">优势与局限</div>
+        <ul class="card-list">
+          <li>优势：高实时性、强鲁棒性、易验证</li>
+          <li>局限：环境适应性差，无长期规划与知识积累</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+  <!-- 12. 认知型Agent定义与特征 -->
+  <section class="slide" id="slide-11">
+    <div class="slide-title">认知型Agent：定义与技术特征</div>
+    <div class="card-group">
+      <div class="card">
+        <div class="card-subtitle">基本定义</div>
+        <ul class="card-list">
+          <li>具备显式知识表示和逻辑推理能力</li>
+          <li>维护对环境的结构化模型，能进行多步规划</li>
+        </ul>
+        <div class="card-subtitle">核心特征</div>
+        <ul class="card-list">
+          <li>符号化世界模型，目标导向推理</li>
+          <li>可学习适应，支持长期知识积累</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-subtitle">典型应用</div>
+        <ul class="card-list">
+          <li>专业决策支持（医疗、金融等）</li>
+          <li>智能虚拟助手、战略游戏AI</li>
+          <li>自主研究与复杂任务自动化</li>
+        </ul>
+        <div class="card-subtitle">优势与挑战</div>
+        <ul class="card-list">
+          <li>优势：复杂问题求解、知识可积累、解释性强</li>
+          <li>挑战：计算复杂度高、知识获取难</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+  <!-- 13. 反应式与认知型Agent对比表 -->
+  <section class="slide" id="slide-12">
+    <div class="slide-title">反应式Agent与认知型Agent对比</div>
+    <div class="card-group">
+      <div class="card" style="flex:2 1 0;max-width:900px;">
+        <table class="card-table">
+          <tr>
+            <th>对比维度</th>
+            <th>反应式Agent</th>
+            <th>认知型Agent</th>
+          </tr>
+          <tr>
+            <td>设计哲学</td>
+            <td>行为主义</td>
+            <td>符号主义</td>
+          </tr>
+          <tr>
+            <td>决策机制</td>
+            <td>刺激-反应</td>
+            <td>推理-规划</td>
+          </tr>
+          <tr>
+            <td>响应速度</td>
+            <td>亚秒级</td>
+            <td>秒级以上</td>
+          </tr>
+          <tr>
+            <td>环境适应性</td>
+            <td>固定场景优</td>
+            <td>动态环境优</td>
+          </tr>
+          <tr>
+            <td>知识表示</td>
+            <td>无显式表示</td>
+            <td>符号化知识库</td>
+          </tr>
+          <tr>
+            <td>典型应用</td>
+            <td>工业控制、简单NPC</td>
+            <td>专业顾问、复杂决策</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </section>
+  <!-- 14. 混合架构与发展趋势 -->
+  <section class="slide" id="slide-13">
+    <div class="slide-title">Agent架构融合与发展趋势</div>
+    <div class="card-group">
+      <div class="card">
+        <div class="card-subtitle">混合型Agent兴起</div>
+        <ul class="card-list">
+          <li>分层架构：底层反应式+高层认知层</li>
+          <li>神经符号整合，结合感知与推理</li>
+          <li>大模型驱动Agent本质为混合架构</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-subtitle">未来趋势</div>
+        <ul class="card-list">
+          <li>认知架构标准化与LLM融合</li>
+          <li>多Agent协同、具身智能发展</li>
+          <li>可配置智能体推动AI应用多样化</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+  <!-- 15. 过渡页4 -->
+  <section class="slide" id="slide-14">
+    <div class="transition-content">
+      <div class="transition-text">应用场景与典型案例</div>
+    </div>
+  </section>
+  <!-- 16. 企业与生产领域应用 -->
+  <section class="slide" id="slide-15">
+    <div class="slide-title">AI Agent在企业与生产领域的应用</div>
+    <div class="card-group">
+      <div class="card">
+        <div class="card-subtitle">企业服务</div>
+        <ul class="card-list">
+          <li>智能客服：自动处理退款、投诉，节省80%人力</li>
+          <li>财务自动化：发票处理效率提升40倍</li>
+          <li>HR管理：自动筛选简历、安排面试，效率提升3倍</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-subtitle">生产与供应链</div>
+        <ul class="card-list">
+          <li>预测性维护：提前7天预测设备故障，减少停机损失</li>
+          <li>库存优化：周转率提升58%</li>
+          <li>物流规划：实时调整路线，运输成本降低15%</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+  <!-- 17. 个人与社会影响、市场趋势 -->
+  <section class="slide" id="slide-16">
+    <div class="slide-title">AI Agent在个人与社会领域的应用与趋势</div>
+    <div class="card-group">
+      <div class="card">
+        <div class="card-subtitle">个人生活服务</div>
+        <ul class="card-list">
+          <li>智能助理：订机票、酒店、租车全流程自动化</li>
+          <li>健康管理：体征数据分析与个性化建议</li>
+          <li>学习辅导：动态调整教学计划</li>
+        </ul>
+      </div>
+      <div class="echarts-card">
+        <div class="echarts-title">全球AI Agent市场规模预测</div>
+        <div class="echarts-box" id="echarts-bar"></div>
+      </div>
+    </div>
+  </section>
+  <!-- 18. 典型案例与影响岗位 -->
+  <section class="slide" id="slide-17">
+    <div class="slide-title">AI Agent典型案例与社会影响</div>
+    <div class="card-group">
+      <div class="card">
+        <div class="card-subtitle">典型案例</div>
+        <ul class="card-list">
+          <li>自动开发APP（MetaGPT多Agent协作）</li>
+          <li>医疗诊断（多Agent分析影像、基因数据）</li>
+          <li>智能家居（能源管理与天气预测Agent协同）</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-subtitle">社会影响</div>
+        <ul class="card-list">
+          <li>到2030年，全球3.5亿岗位将被AI Agent重构</li>
+          <li>受影响岗位：客服、翻译、内容创作、初级数据分析等</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+  <!-- 19. 过渡页5 -->
+  <section class="slide" id="slide-18">
+    <div class="transition-content">
+      <div class="transition-text">总结与未来趋势</div>
+    </div>
+  </section>
+  <!-- 20. 总结与建议 -->
+  <section class="slide" id="slide-19">
+    <div class="slide-title">AI Agent：总结与技术选型建议</div>
+    <div class="summary-list">
+      <div class="summary-item"><span class="summary-index">1</span>AI Agent代表AI从“工具”向“代理”范式转变，具备自主感知、决策与执行能力。</div>
+      <div class="summary-item"><span class="summary-index">2</span>反应式Agent适用于确定性实时控制，认知型Agent适合复杂决策与知识密集场景。</div>
+      <div class="summary-item"><span class="summary-index">3</span>混合架构是企业级AI首选，兼顾实时性与智能性。</div>
+      <div class="summary-item"><span class="summary-index">4</span>未来趋势：认知架构标准化、多Agent协同、具身智能与可配置智能体。</div>
+    </div>
+  </section>
+  <!-- 21. 结束页 -->
+  <section class="slide" id="slide-20">
+    <div class="ending-content">
+      <div class="ending-text">感谢聆听！</div>
+      <div class="ending-meta">AI Agent知识分享 · Genie · 2025-08-12</div>
+    </div>
+  </section>
+  <!-- 控件 -->
+  <div class="ppt-controls">
+    <button class="ppt-btn" id="btn-prev" title="上一页" aria-label="上一页">&lt;</button>
+    <button class="ppt-btn" id="btn-play" title="自动播放" aria-label="自动播放">&#9654;</button>
+    <button class="ppt-btn" id="btn-next" title="下一页" aria-label="下一页">&gt;</button>
+    <div class="ppt-progress-bar">
+      <div class="ppt-progress" id="ppt-progress" style="width:0%"></div>
+    </div>
+    <span class="ppt-progress-label" id="ppt-progress-label">1 / 21</span>
+  </div>
+</div>
+<script>
+  // 幻灯片切换逻辑
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  let cur = 0;
+  let playing = false;
+  let playTimer = null;
+  const total = slides.length;
+  function showSlide(idx) {
+    if (idx < 0 || idx >= total) return;
+    slides.forEach((s, i) => s.classList.toggle('active', i === idx));
+    cur = idx;
+    // 控件状态
+    document.getElementById('btn-prev').disabled = (cur === 0);
+    document.getElementById('btn-next').disabled = (cur === total-1);
+    document.getElementById('ppt-progress').style.width = ((cur+1)/total*100).toFixed(1)+'%';
+    document.getElementById('ppt-progress-label').innerText = (cur+1)+' / '+total;
+    // echarts resize
+    setTimeout(resizeEcharts, 50);
+  }
+  document.getElementById('btn-prev').onclick = () => { stopPlay(); showSlide(cur-1); };
+  document.getElementById('btn-next').onclick = () => { stopPlay(); showSlide(cur+1); };
+  document.getElementById('btn-play').onclick = () => {
+    if (playing) { stopPlay(); return; }
+    playing = true;
+    document.getElementById('btn-play').innerHTML = '&#10073;&#10073;';
+    playTimer = setInterval(() => {
+      if (cur < total-1) showSlide(cur+1);
+      else stopPlay();
+    }, 3500);
+  };
+  function stopPlay() {
+    playing = false;
+    document.getElementById('btn-play').innerHTML = '&#9654;';
+    if (playTimer) clearInterval(playTimer);
+    playTimer = null;
+  }
+  // 左右键支持
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') { stopPlay(); showSlide(cur+1); }
+    if (e.key === 'ArrowLeft') { stopPlay(); showSlide(cur-1); }
+  });
+  // 初始化
+  showSlide(0);
+
+  // Echarts初始化
+  let radarChart = null, barChart = null;
+  function resizeEcharts() {
+    // 雷达图
+    const radarDom = document.getElementById('echarts-radar');
+    if (radarDom) {
+      if (!radarChart) radarChart = echarts.init(radarDom);
+      radarChart.setOption({
+        backgroundColor: '#2e3140',
+        tooltip: { show: true },
+        legend: {
+          data: ['传统AI', 'AI Agent'],
+          right: 18, top: 12,
+          textStyle: { color: '#b3b5c6', fontSize: 13 }
+        },
+        radar: {
+          indicator: [
+            { name: '自主性', max: 5 },
+            { name: '多模态交互', max: 5 },
+            { name: '任务复杂度', max: 5 },
+            { name: '环境适应性', max: 5 },
+            { name: '持续学习', max: 5 }
+          ],
+          radius: 85,
+          splitArea: { areaStyle: { color: ['#31334a','#2e3140'] } },
+          axisLine: { lineStyle: { color: '#43455a' } },
+          splitLine: { lineStyle: { color: '#43455a' } },
+          name: { color: '#b3b5c6', fontSize: 13 }
+        },
+        series: [{
+          type: 'radar',
+          areaStyle: { opacity: 0.15 },
+          symbol: 'circle',
+          symbolSize: 7,
+          data: [
+            { value: [1, 1, 2, 1, 1], name: '传统AI', itemStyle: { color: '#b0b3d6' }, lineStyle: { color: '#b0b3d6' } },
+            { value: [5, 5, 5, 5, 5], name: 'AI Agent', itemStyle: { color: '#7e7ff3' }, lineStyle: { color: '#7e7ff3' } }
+          ]
+        }]
+      });
+      radarChart.resize();
+    }
+    // 柱状图
+    const barDom = document.getElementById('echarts-bar');
+    if (barDom) {
+      if (!barChart) barChart = echarts.init(barDom);
+      barChart.setOption({
+        backgroundColor: '#2e3140',
+        tooltip: { trigger: 'axis' },
+        grid: { left: 40, right: 30, top: 40, bottom: 30 },
+        xAxis: {
+          type: 'category',
+          data: ['2024', '2026', '2028', '2030'],
+          axisLine: { lineStyle: { color: '#43455a' } },
+          axisLabel: { color: '#b3b5c6', fontSize: 13 }
+        },
+        yAxis: {
+          type: 'value',
+          name: '亿美元',
+          nameTextStyle: { color: '#b3b5c6', fontSize: 12 },
+          splitLine: { lineStyle: { color: '#393c52', type: 'dashed' } },
+          axisLine: { show: false },
+          axisLabel: { color: '#b3b5c6', fontSize: 13 }
+        },
+        series: [{
+          type: 'bar',
+          data: [51, 150, 320, 471],
+          barWidth: 32,
+          itemStyle: { color: '#7e7ff3', borderRadius: [8,8,0,0] },
+          label: { show: true, position: 'top', color: '#e6e7ec', fontWeight: 600 }
+        }]
+      });
+      barChart.resize();
+    }
+  }
+  window.addEventListener('resize', resizeEcharts);
+  // 首次渲染
+  setTimeout(resizeEcharts, 200);
+</script>
+</body>
+</html>
